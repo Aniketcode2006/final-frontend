@@ -49,10 +49,7 @@ function MainApp() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-900 antialiased font-sans selection:bg-indigo-100 selection:text-indigo-900">
       {/* Top Bar Header */}
-      <Header
-        onOpenRegisterStudent={() => setIsRegisterStudentOpen(true)}
-        onOpenAddCourse={() => setIsAddCourseOpen(true)}
-      />
+      <Header />
 
       {/* Main Viewport Split with Sidebar */}
       <div className="flex-1 flex overflow-hidden">

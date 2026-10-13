@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useCollege } from '../../context/CollegeContext.jsx';
-import { UserCheck, ShieldCheck, GraduationCap, PlusCircle, Radio, LogOut, Bell, Camera } from 'lucide-react';
-import { TableDensityToggle } from '../common/TableDensityToggle.jsx';
+import { UserCheck, ShieldCheck, LogOut, Bell, Camera, QrCode } from 'lucide-react';
 import { NotificationCenterModal } from '../notifications/NotificationCenterModal.jsx';
+import { MobileTestModal } from '../common/MobileTestModal.jsx';
 
-export const Header = ({ onOpenRegisterStudent, onOpenAddCourse }) => {
+export const Header = () => {
   const { 
     role, 
     setRole, 
@@ -18,6 +18,7 @@ export const Header = ({ onOpenRegisterStudent, onOpenAddCourse }) => {
   } = useCollege();
 
   const [isNotificationCenterOpen, setIsNotificationCenterOpen] = useState(false);
+  const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
   const unreadCount = notifications ? notifications.filter((n) => n.unread).length : 0;
 
   return (
@@ -109,9 +110,6 @@ export const Header = ({ onOpenRegisterStudent, onOpenAddCourse }) => {
 
       {/* Zone 3: Role Switcher & Table Density & Primary Action */}
       <div className="flex items-center gap-2.5 shrink-0">
-        {/* Table Density Controller for clean, smaller tables */}
-        <TableDensityToggle className="hidden md:inline-flex" />
-
         {/* Role Switcher & Student Photo Profile Badge */}
         {role === 'student' && currentStudent ? (
           <button
@@ -208,32 +206,16 @@ export const Header = ({ onOpenRegisterStudent, onOpenAddCourse }) => {
           </div>
         )}
 
-        {/* Primary Action Button depending on Role */}
-        {role === 'admin' ? (
-          <button
-            onClick={activeTab === 'courses' ? onOpenAddCourse : onOpenRegisterStudent}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors whitespace-nowrap shrink-0 shadow-xs"
-          >
-            <PlusCircle className="w-3.5 h-3.5" />
-            <span>{activeTab === 'courses' ? 'New Course' : 'Register Student'}</span>
-          </button>
-        ) : role === 'professor' ? (
-          <button
-            onClick={() => setActiveTab('attendance')}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors whitespace-nowrap shrink-0 shadow-xs"
-          >
-            <Radio className="w-3.5 h-3.5" />
-            <span>Live Attendance</span>
-          </button>
-        ) : (
-          <button
-            onClick={() => setActiveTab('courses')}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors whitespace-nowrap shrink-0 shadow-xs"
-          >
-            <GraduationCap className="w-3.5 h-3.5" />
-            <span>Browse Catalog</span>
-          </button>
-        )}
+        {/* Mobile Phone Test QR Trigger */}
+        <button
+          onClick={() => setIsMobileModalOpen(true)}
+          title="Scan QR Code to test on Mobile Phone"
+          className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-150 cursor-pointer group flex items-center gap-1.5 border border-transparent hover:border-indigo-200"
+          aria-label="Test on Phone via QR"
+        >
+          <QrCode className="w-4 h-4 group-hover:scale-110 transition-transform text-slate-700 group-hover:text-indigo-600" />
+          <span className="hidden lg:inline text-xs font-semibold text-slate-600 group-hover:text-indigo-600">Mobile QR</span>
+        </button>
 
         {/* Notification Center Trigger Bell Icon */}
         <button
@@ -266,6 +248,12 @@ export const Header = ({ onOpenRegisterStudent, onOpenAddCourse }) => {
       <NotificationCenterModal
         isOpen={isNotificationCenterOpen}
         onClose={() => setIsNotificationCenterOpen(false)}
+      />
+
+      {/* Mobile QR Code Modal */}
+      <MobileTestModal
+        isOpen={isMobileModalOpen}
+        onClose={() => setIsMobileModalOpen(false)}
       />
     </header>
   );
