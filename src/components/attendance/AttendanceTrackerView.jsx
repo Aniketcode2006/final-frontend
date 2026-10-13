@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useCollege } from '../../context/CollegeContext.jsx';
 import { 
-  CheckCircle2, 
+  CalendarCheck2, 
   AlertCircle, 
   Calendar, 
   Clock, 
@@ -116,7 +116,7 @@ export const AttendanceTrackerView = () => {
             <span>Academic Attendance Registry</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <CheckCircle2 className="w-6 h-6 text-indigo-600" />
+            <CalendarCheck2 className="w-6 h-6 text-emerald-600" />
             <span>Attendance Tracker</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">

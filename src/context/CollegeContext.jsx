@@ -102,6 +102,7 @@ export const CollegeProvider = ({ children }) => {
   const [pastSessions] = useState(PAST_SESSIONS);
   const [selectedCourseId, setSelectedCourseId] = useState('c-1');
   const [toasts, setToasts] = useState([]);
+  const [isStudentPhotoModalOpen, setIsStudentPhotoModalOpen] = useState(false);
 
   // Dedicated Subject-Wise Attendance state
   const [subjectAttendance, setSubjectAttendance] = useState(() => {
@@ -707,6 +708,8 @@ export const CollegeProvider = ({ children }) => {
         setIsSidebarCollapsed,
         isCompactMode,
         setIsCompactMode,
+        isStudentPhotoModalOpen,
+        setIsStudentPhotoModalOpen,
         isAuthenticated,
         currentStudentId,
         setCurrentStudentId,

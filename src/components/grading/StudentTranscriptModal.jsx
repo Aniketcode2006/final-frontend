@@ -15,8 +15,8 @@ export const StudentTranscriptModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs overflow-y-auto modal-backdrop-animate">
+      <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden my-8 modal-content-animate">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-3">

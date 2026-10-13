@@ -45,3 +45,99 @@
   background: #94a3b8;
 }
 
+/* Page Transition and Hover Animation System */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: fadeInSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth Dialogbox & Modal Animations */
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes modalPopInSpring {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  70% {
+    transform: scale(1.01) translateY(-1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-backdrop-animate {
+  animation: modalBackdropFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-content-animate {
+  animation: modalPopInSpring 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Class Schedule 3D Layered Hovering & Routine Reveal System */
+.schedule-perspective-container {
+  perspective: 1200px;
+}
+
+.day-deck-card {
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.28s ease, background-color 0.28s ease;
+  transform-style: preserve-3d;
+}
+
+.day-deck-card:hover {
+  transform: translateY(-8px) scale(1.04) !important;
+  box-shadow: 0 16px 30px -8px rgba(15, 23, 42, 0.14), 0 6px 14px -3px rgba(79, 70, 229, 0.12) !important;
+  z-index: 35 !important;
+}
+
+@keyframes routineSlideOut {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.routine-reveal {
+  animation: routineSlideOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes routineItemCascade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.routine-item {
+  animation: routineItemCascade 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+

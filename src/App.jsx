@@ -23,12 +23,15 @@ import { LoginView } from './components/auth/LoginView.jsx';
 import { ToastContainer } from './components/common/Toast.jsx';
 import { CourseFormModal } from './components/courses/CourseFormModal.jsx';
 import { StudentRegisterModal } from './components/students/StudentRegisterModal.jsx';
+import { StudentPhotoModal } from './components/student/StudentPhotoModal.jsx';
 
 function MainApp() {
   const { 
     activeTab, 
     role, 
-    isAuthenticated, 
+    isAuthenticated,
+    isStudentPhotoModalOpen,
+    setIsStudentPhotoModalOpen
   } = useCollege();
   const [isRegisterStudentOpen, setIsRegisterStudentOpen] = useState(false);
   const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
@@ -58,27 +61,29 @@ function MainApp() {
           onOpenAddCourse={() => setIsAddCourseOpen(true)}
         />
 
-        {/* Dynamic Content Surface */}
+        {/* Dynamic Content Surface with Smooth Page Transitions */}
         <main className="flex-1 overflow-y-auto bg-slate-50 pb-16 transition-all">
-          {activeTab === 'dashboard' && <DashboardView />}
-          {activeTab === 'timetable' && <TimetableView />}
-          {activeTab === 'attendance' && <AttendanceTrackerView />}
-          {activeTab === 'courses' && <CourseCatalogView />}
-          {activeTab === 'events' && <UpcomingEventsView />}
-          {activeTab === 'notifications' && <NotificationsView />}
-          {activeTab === 'clubs' && <StudentsClubView />}
-          {activeTab === 'materials' && <StudyMaterialsView />}
-          {activeTab === 'grading' && <GradingView />}
-          
-          {activeTab === 'students' && (
-            <StudentRegistrationView
-              isRegisterModalOpen={isRegisterStudentOpen}
-              setIsRegisterModalOpen={setIsRegisterStudentOpen}
-            />
-          )}
+          <div key={activeTab} className="page-transition">
+            {activeTab === 'dashboard' && <DashboardView />}
+            {activeTab === 'timetable' && <TimetableView />}
+            {activeTab === 'attendance' && <AttendanceTrackerView />}
+            {activeTab === 'courses' && <CourseCatalogView />}
+            {activeTab === 'events' && <UpcomingEventsView />}
+            {activeTab === 'notifications' && <NotificationsView />}
+            {activeTab === 'clubs' && <StudentsClubView />}
+            {activeTab === 'materials' && <StudyMaterialsView />}
+            {activeTab === 'grading' && <GradingView />}
+            
+            {activeTab === 'students' && (
+              <StudentRegistrationView
+                isRegisterModalOpen={isRegisterStudentOpen}
+                setIsRegisterModalOpen={setIsRegisterStudentOpen}
+              />
+            )}
 
-          {activeTab === 'analytics' && <AnalyticsView />}
-          {activeTab === 'portal' && <StudentPortalView />}
+            {activeTab === 'analytics' && <AnalyticsView />}
+            {activeTab === 'portal' && <StudentPortalView />}
+          </div>
         </main>
       </div>
 
@@ -91,6 +96,11 @@ function MainApp() {
       <CourseFormModal
         isOpen={isAddCourseOpen}
         onClose={() => setIsAddCourseOpen(false)}
+      />
+
+      <StudentPhotoModal
+        isOpen={isStudentPhotoModalOpen}
+        onClose={() => setIsStudentPhotoModalOpen(false)}
       />
 
       {/* Responsive Toast Feedback System */}

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCollege } from '../../context/CollegeContext.jsx';
 import { 
   LayoutDashboard, 
   CalendarDays, 
-  CheckCircle2, 
+  CalendarCheck2, 
   BookOpen, 
   Sparkles, 
   Bell, 
@@ -13,9 +13,10 @@ import {
   GraduationCap, 
   RotateCcw, 
   LogOut,
-  ChevronLeft,
-  ChevronRight,
-  School
+  School,
+  Pin,
+  PinOff,
+  Camera
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -24,222 +25,244 @@ export const Sidebar = () => {
     setActiveTab, 
     role, 
     courses, 
-    notifications,
-    studentClubs,
-    resetToDefaults,
+    notifications, 
+    studentClubs, 
+    resetToDefaults, 
     currentStudent,
-    isSidebarCollapsed,
+    isSidebarCollapsed, 
     setIsSidebarCollapsed,
-    logout
+    setIsStudentPhotoModalOpen, 
+    logout 
   } = useCollege();
 
-  const unreadNotifCount = notifications.filter(n => n.unread).length;
+  // Automatic open/close on hover
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
 
-  // Navigation Items required by user - each with a unique, separate icon
-  const primaryNavItems = [
+  const unreadNotifCount = notifications.filter((n) => n.unread).length;
+
+  // The sidebar is open if pinned OR hovered
+  const isExpanded = isPinned || isHovered;
+
+  // Navigation Items - Each with a distinctive royal color and attendance icon updated to CalendarCheck2
+  const navItems = [
     { 
       id: 'dashboard', 
       label: 'Dashboard', 
-      icon: <LayoutDashboard className="w-4 h-4 shrink-0" /> 
+      icon: <LayoutDashboard className="w-4 h-4 shrink-0" />,
+      colorClass: 'text-blue-600 bg-blue-50/90 border border-blue-200/50',
+      activeColor: 'bg-blue-600 text-white',
     },
     { 
       id: 'timetable', 
-      label: 'Class Schedule', 
+      label: 'Schedule', 
+      fullName: 'Class Schedule',
       icon: <CalendarDays className="w-4 h-4 shrink-0" />,
+      colorClass: 'text-indigo-600 bg-indigo-50/90 border border-indigo-200/50',
+      activeColor: 'bg-indigo-600 text-white',
       badge: 'Mon–Sat'
     },
     { 
       id: 'attendance', 
       label: 'Attendance', 
-      icon: <CheckCircle2 className="w-4 h-4 shrink-0" />
+      fullName: 'Attendance',
+      // Updated attendance icon as requested: CalendarCheck2 (royal calendar with checkmark)
+      icon: <CalendarCheck2 className="w-4 h-4 shrink-0" />,
+      colorClass: 'text-emerald-600 bg-emerald-50/90 border border-emerald-200/50',
+      activeColor: 'bg-emerald-600 text-white',
     },
     { 
       id: 'courses', 
-      label: 'Course Catalogue', 
+      label: 'Courses', 
+      fullName: 'Course Catalogue',
       icon: <BookOpen className="w-4 h-4 shrink-0" />, 
+      colorClass: 'text-rose-600 bg-rose-50/90 border border-rose-200/50',
+      activeColor: 'bg-rose-600 text-white',
       badge: `${courses.length}` 
     },
     { 
       id: 'events', 
-      label: 'Upcoming Events', 
+      label: 'Events', 
+      fullName: 'Upcoming Events',
       icon: <Sparkles className="w-4 h-4 shrink-0" />,
-      badge: 'Fall 26'
+      colorClass: 'text-amber-500 bg-amber-50/90 border border-amber-200/50',
+      activeColor: 'bg-amber-500 text-white',
     },
     { 
       id: 'notifications', 
-      label: 'Notifications', 
+      label: 'Notices', 
+      fullName: 'Notifications',
       icon: <Bell className="w-4 h-4 shrink-0" />,
-      badge: unreadNotifCount > 0 ? `${unreadNotifCount}` : undefined,
-      badgeColor: 'bg-indigo-600 text-white'
+      colorClass: 'text-sky-600 bg-sky-50/90 border border-sky-200/50',
+      activeColor: 'bg-sky-600 text-white',
+      badge: unreadNotifCount > 0 ? `${unreadNotifCount}` : undefined
     },
     { 
       id: 'clubs', 
-      label: 'Students Club', 
+      label: 'Clubs', 
+      fullName: 'Students Club',
       icon: <Users2 className="w-4 h-4 shrink-0" />,
+      colorClass: 'text-purple-600 bg-purple-50/90 border border-purple-200/50',
+      activeColor: 'bg-purple-600 text-white',
       badge: `${studentClubs.length}`
     },
     { 
       id: 'materials', 
-      label: 'Study Materials', 
-      icon: <FolderOpen className="w-4 h-4 shrink-0" /> 
+      label: 'Materials', 
+      fullName: 'Study Materials',
+      icon: <FolderOpen className="w-4 h-4 shrink-0" />,
+      colorClass: 'text-teal-600 bg-teal-50/90 border border-teal-200/50',
+      activeColor: 'bg-teal-600 text-white',
     },
-  ];
-
-  // Secondary academic items (Gradebook & Student Directory)
-  const academicNavItems = [
     { 
       id: 'grading', 
-      label: role === 'student' ? 'My Transcripts' : 'Gradebook', 
-      icon: <FileSpreadsheet className="w-4 h-4 shrink-0" /> 
+      label: role === 'student' ? 'Transcripts' : 'Gradebook', 
+      fullName: role === 'student' ? 'My Transcripts' : 'Gradebook',
+      icon: <FileSpreadsheet className="w-4 h-4 shrink-0" />,
+      colorClass: 'text-violet-600 bg-violet-50/90 border border-violet-200/50',
+      activeColor: 'bg-violet-600 text-white',
     },
     ...(role !== 'student' ? [
       { 
         id: 'students', 
-        label: 'Student Directory', 
-        icon: <GraduationCap className="w-4 h-4 shrink-0" /> 
+        label: 'Directory', 
+        fullName: 'Student Directory',
+        icon: <GraduationCap className="w-4 h-4 shrink-0" />,
+        colorClass: 'text-slate-700 bg-slate-100 border border-slate-200/50',
+        activeColor: 'bg-slate-800 text-white',
       }
     ] : [])
   ];
 
-  const renderNavButton = (item) => {
-    const isActive = activeTab === item.id;
-    return (
-      <button
-        key={item.id}
-        onClick={() => setActiveTab(item.id)}
-        title={isSidebarCollapsed ? item.label : undefined}
-        className={`w-full flex items-center ${
-          isSidebarCollapsed ? 'justify-center px-2 py-2.5' : 'justify-between px-3 py-2'
-        } rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-          isActive
-            ? 'bg-slate-900 text-white shadow-xs font-semibold'
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-        }`}
-      >
-        <div className={`flex items-center ${isSidebarCollapsed ? '' : 'gap-2.5 truncate'}`}>
-          <span className={isActive ? 'text-indigo-400' : 'text-slate-500'}>
-            {item.icon}
-          </span>
-          {!isSidebarCollapsed && (
-            <span className="truncate">{item.label}</span>
-          )}
-        </div>
-
-        {!isSidebarCollapsed && item.badge && (
-          <span
-            className={`text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded ${
-              item.badgeColor || (isActive ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600')
-            }`}
-          >
-            {item.badge}
-          </span>
-        )}
-      </button>
-    );
-  };
-
   return (
     <aside
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={`${
-        isSidebarCollapsed ? 'w-16' : 'w-60'
-      } bg-white border-r border-slate-200 flex flex-col shrink-0 min-h-[calc(100vh-57px)] transition-all duration-150 select-none z-20`}
+        isExpanded ? 'w-56' : 'w-20'
+      } bg-white border-r border-slate-200 flex flex-col shrink-0 min-h-[calc(100vh-57px)] transition-all duration-300 ease-in-out select-none z-20 shadow-xs relative`}
     >
-      {/* Sidebar Header & Toggle */}
-      <div className={`border-b border-slate-100 ${isSidebarCollapsed ? 'p-2.5' : 'p-3'} flex items-center justify-between`}>
-        {!isSidebarCollapsed ? (
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0">
-              <School className="w-4 h-4 text-indigo-400" />
-            </div>
-            <div className="min-w-0">
+      {/* Sidebar Header */}
+      <div className="p-3 border-b border-slate-100 flex items-center justify-between">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+            <School className="w-4 h-4 text-indigo-400" />
+          </div>
+          {isExpanded && (
+            <div className="min-w-0 transition-opacity duration-200">
               <div className="text-xs font-bold text-slate-900 truncate">Unity College</div>
               <div className="text-[10px] text-slate-500 truncate capitalize font-medium">{role} Portal</div>
             </div>
-          </div>
-        ) : (
-          <div className="w-full flex justify-center">
-            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
-              <School className="w-4 h-4 text-indigo-400" />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        <button
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className={`p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors cursor-pointer ${
-            isSidebarCollapsed ? 'hidden' : 'block'
-          }`}
-          title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
+        {/* Pin lock button when hovered */}
+        {isExpanded && (
+          <button
+            onClick={() => setIsPinned(!isPinned)}
+            title={isPinned ? 'Unpin auto-collapse' : 'Pin sidebar open'}
+            className={`p-1.5 rounded-md transition-colors cursor-pointer ${
+              isPinned ? 'text-indigo-600 bg-indigo-50' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            {isPinned ? <Pin className="w-3.5 h-3.5 fill-indigo-600" /> : <PinOff className="w-3.5 h-3.5" />}
+          </button>
+        )}
       </div>
 
-      {/* Profile quick summary for student */}
-      {role === 'student' && currentStudent && !isSidebarCollapsed && (
-        <div className="mx-3 mt-3 p-2 bg-slate-50 rounded-lg border border-slate-100 flex items-center gap-2.5">
-          <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${currentStudent.avatarBg} text-white flex items-center justify-center font-bold text-[11px] shrink-0`}>
-            {currentStudent.firstName[0]}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-[11px] font-semibold text-slate-800 truncate">
-              {currentStudent.firstName} {currentStudent.lastName}
-            </div>
-            <div className="text-[10px] text-slate-500 font-mono truncate">
-              {currentStudent.studentId} · {currentStudent.year}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Main Navigation: Icon on top with its specific name in small fonts below */}
+      <nav className="p-2 flex-1 flex flex-col gap-1.5 overflow-y-auto">
+        {navItems.map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              title={item.fullName || item.label}
+              className={`w-full flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-150 cursor-pointer group relative ${
+                isActive
+                  ? 'bg-slate-900 text-white shadow-xs font-semibold ring-1 ring-slate-800'
+                  : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 hover:shadow-2xs'
+              }`}
+            >
+              {/* Royal-colored icon container */}
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 duration-150 ${
+                isActive ? 'bg-white/15 text-white' : item.colorClass
+              }`}>
+                {item.icon}
+              </div>
 
-      {/* Main Navigation Links */}
-      <nav className={`${isSidebarCollapsed ? 'p-2' : 'p-3'} flex-1 flex flex-col gap-1 overflow-y-auto`}>
-        {!isSidebarCollapsed && (
-          <div className="px-3 pt-1 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Main Menu
-          </div>
-        )}
-        
-        {primaryNavItems.map(renderNavButton)}
+              {/* Specific Name in small font below icon */}
+              <span className={`text-[10px] font-medium leading-tight mt-1 text-center truncate max-w-full px-0.5 tracking-tight ${
+                isActive ? 'text-white font-semibold' : 'text-slate-600 group-hover:text-slate-900'
+              }`}>
+                {isExpanded ? (item.fullName || item.label) : item.label}
+              </span>
 
-        <div className="my-2 border-t border-slate-100" />
-
-        {!isSidebarCollapsed && (
-          <div className="px-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Academic Records
-          </div>
-        )}
-
-        {academicNavItems.map(renderNavButton)}
+              {/* Subtle badge counter if applicable */}
+              {item.badge && (
+                <span className={`absolute top-1.5 right-1.5 text-[9px] font-mono font-bold px-1 py-0.2 rounded-full ${
+                  isActive ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
+                }`}>
+                  {item.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </nav>
 
-      {/* Toggle button when collapsed */}
-      {isSidebarCollapsed && (
-        <div className="p-2 border-t border-slate-100 flex justify-center">
+      {/* Footer Utility & Sign Out */}
+      <div className="p-2 border-t border-slate-100 flex flex-col gap-1.5 text-xs text-slate-500">
+        {/* Student Photo Profile Trigger */}
+        {currentStudent && (
           <button
-            onClick={() => setIsSidebarCollapsed(false)}
-            className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-            title="Expand sidebar"
+            onClick={() => setIsStudentPhotoModalOpen(true)}
+            title="Student picture (Click to put or change photo)"
+            className="w-full flex items-center gap-2 py-1.5 px-2 rounded-xl bg-slate-50 hover:bg-indigo-50/70 border border-slate-200/80 hover:border-indigo-300 transition-all cursor-pointer group"
           >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+            <div className="relative shrink-0">
+              {currentStudent.avatarUrl ? (
+                <img
+                  src={currentStudent.avatarUrl}
+                  alt={currentStudent.firstName}
+                  className="w-6 h-6 rounded-full object-cover ring-1 ring-indigo-400 group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <div
+                  className={`w-6 h-6 rounded-full bg-gradient-to-br ${currentStudent.avatarBg} text-white flex items-center justify-center font-bold text-[10px]`}
+                >
+                  {currentStudent.firstName[0]}
+                </div>
+              )}
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-slate-900 text-white flex items-center justify-center ring-1 ring-white">
+                <Camera className="w-1.5 h-1.5 text-indigo-300" />
+              </div>
+            </div>
 
-      {/* Footer Controls */}
-      <div className={`border-t border-slate-100 ${isSidebarCollapsed ? 'p-2 justify-center' : 'p-3 justify-between'} flex items-center text-xs text-slate-500`}>
+            {isExpanded && (
+              <div className="flex flex-col text-left truncate leading-tight">
+                <span className="text-[11px] font-bold text-slate-800 group-hover:text-indigo-600 truncate">
+                  {currentStudent.firstName} {currentStudent.lastName}
+                </span>
+                <span className="text-[9px] text-indigo-600 font-medium">Put / Change Photo</span>
+              </div>
+            )}
+          </button>
+        )}
+
         <button
           onClick={resetToDefaults}
-          title="Reset database to initial state"
-          className="flex items-center gap-1.5 hover:text-slate-900 transition-colors p-1 cursor-pointer"
+          title="Reset sample college database"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer text-[11px]"
         >
           <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-          {!isSidebarCollapsed && <span className="text-[11px]">Reset Data</span>}
+          {isExpanded && <span>Reset Demo Data</span>}
         </button>
-        {!isSidebarCollapsed && (
+        {isExpanded && (
           <button
             onClick={logout}
-            className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-rose-600 transition-colors font-medium cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition-colors cursor-pointer text-[11px] font-medium"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign Out</span>
